@@ -1,0 +1,11 @@
+Oct-25 13:09:23.179 [main] DEBUG nextflow.cli.Launcher - $> nextflow run main.nf -w /mount/persistant_volume_11tb/pipeline_test/prjeb3381_workspaceDir/ -profile testing_sra -resume -with-dag -with-trace trace_dnapipe.txt -with-timeline timeline_dnapipe.html -with-report report_dnapipe.html
+Oct-25 13:09:23.384 [main] INFO  nextflow.cli.CmdRun - N E X T F L O W  ~  version 21.10.6
+Oct-25 13:09:23.552 [main] DEBUG nextflow.cli.Launcher - Operation aborted
+nextflow.exception.AbortOperationException: Not a valid project name: main.nf
+	at nextflow.scm.AssetManager.resolveName(AssetManager.groovy:261)
+	at nextflow.scm.AssetManager.build(AssetManager.groovy:131)
+	at nextflow.scm.AssetManager.<init>(AssetManager.groovy:109)
+	at nextflow.cli.CmdRun.getScriptFile(CmdRun.groovy:366)
+	at nextflow.cli.CmdRun.run(CmdRun.groovy:264)
+	at nextflow.cli.Launcher.run(Launcher.groovy:480)
+	at nextflow.cli.Launcher.main(Launcher.groovy:639)

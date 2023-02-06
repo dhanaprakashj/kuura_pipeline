@@ -1,0 +1,254 @@
+FROM ubuntu:20.04
+
+LABEL \
+    author="Dhanaprakash Jambulingam" \
+    description="DNA-seq pipeline" \
+    maintainer="<dhajam@utu.fi>"
+
+ENV DEBIAN_FRONTEND=noninteractive
+RUN apt-get update --fix-missing \
+    && apt-get install -y --no-install-recommends apt-utils
+
+## Installing the core libraries and software for ubuntu
+RUN apt-get install --yes \
+    default-jre \
+    python \
+    python-dev \
+    python3-dev \
+    python3-pip \
+    build-essential \
+    gcc \
+    gcc-multilib \
+    make \
+    git \
+    autoconf \
+    g++ \
+    bzip2 \
+    unzip \
+    zip \
+    wget \
+    curl \
+    zlib1g-dev \
+    libcurl4-openssl-dev \
+    pkg-config \
+    libbz2-dev \
+    liblzma-dev \
+    libncurses5-dev \
+    libncursesw5-dev \
+    parallel
+
+ENV samtools_version 1.15.1
+ENV bcftools_version 1.15.1
+ENV htslib_version 1.15.1
+ENV C_INCLUDE_PATH=/usr/local/include
+ENV LIBRARY_PATH=/usr/local/lib
+ENV LD_LIBRARY_PATH=/usr/local/lib
+ENV bedtools_version 2.30.0
+ENV fastqc_version 0.11.9
+ENV bwa_version 0.7.17
+ENV bwa_mem2_version 2.0pre2
+ENV gatk_version 4.2.6.1
+ENV strelka2_version 2.9.2
+ENV manta_version 1.6.0
+ENV fastp_version 0.23.1
+# ENV platypus_version 0.8.1
+ENV varscan_version 2.4.2
+ENV freebayes_version 1.3.6
+ENV STAR_version 2.7.10a
+ENV subread_version 2.0.3
+
+ENV PATH "$PATH:/root/.local/bin"
+ENV PATH "$PATH:/usr/local/bin"
+ENV PATH "$PATH:/tools/mosdepth"
+ENV PATH "$PATH:/tools/mosdepth/scripts"
+ENV PATH "$PATH:/tools/gatk-${gatk_version}"
+ENV PATH "$PATH:/tools/bwa-${bwa_version}"
+ENV PATH "$PATH:/tools/bwa-mem2-${bwa_mem2_version}_x64-linux"
+ENV PATH "$PATH:/tools/strelka-${strelka2_version}.centos6_x86_64/bin"
+ENV PATH "$PATH:/tools/manta-${manta_version}.centos6_x86_64/bin"
+ENV PATH "$PATH:/tools/Platypus/bin"
+ENV PATH "$PATH:/tools/varscan-${varscan_version}"
+ENV PATH "$PATH:/tools/freebayes-${freebayes_version}"
+ENV PATH "$PATH:/tools/freebayes-${freebayes_version}/scripts"
+
+##  Making working directory
+RUN mkdir /tools
+
+## Installing samtools suite
+#Samtools
+RUN cd /tools/ \
+    && wget https://github.com/samtools/samtools/releases/download/${samtools_version}/samtools-${samtools_version}.tar.bz2 \
+    && tar -xvjf samtools-${samtools_version}.tar.bz2 \
+    && cd samtools-${samtools_version} \
+    && ./configure \
+    && make \
+    && make install
+
+#bcftools
+RUN cd /tools/ \
+    && wget https://github.com/samtools/bcftools/releases/download/1.15.1/bcftools-1.15.1.tar.bz2 \
+    && tar -xvjf bcftools-${bcftools_version}.tar.bz2 \
+    && cd bcftools-${bcftools_version}  \
+    && ./configure \
+    && make \
+    && make install
+
+#htslib
+RUN cd /tools/ \
+    && wget https://github.com/samtools/htslib/releases/download/${htslib_version}/htslib-${htslib_version}.tar.bz2 \
+    &&  tar -xvjf htslib-${htslib_version}.tar.bz2 \
+    && cd htslib-${htslib_version} \
+    && autoconf \
+    && ./configure \
+    && make \
+    && make install
+
+## Installing bedtools
+RUN cd /tools/ \
+    && wget https://github.com/arq5x/bedtools2/releases/download/v${bedtools_version}/bedtools-${bedtools_version}.tar.gz \
+    && tar -zxvf bedtools-${bedtools_version}.tar.gz \
+    && cd bedtools2/ \
+    && make \
+    && make install
+
+## Installing FASTQC
+RUN cd /tools/ \
+    && wget https://www.bioinformatics.babraham.ac.uk/projects/fastqc/fastqc_v${fastqc_version}.zip \
+    && unzip fastqc_v${fastqc_version}.zip \
+    && cd FastQC && chmod 755 fastqc \
+    && ln -s /tools/FastQC/fastqc /bin/fastqc 
+
+## Installing fastp
+RUN cd /tools/ \
+    && wget http://opengene.org/fastp/fastp.${fastp_version} \
+    && mv fastp.${fastp_version} fastp \
+    && chmod a+x ./fastp \
+    && mv fastp /bin/
+
+## Installing cutadapt
+RUN python3 -m pip install --upgrade cutadapt
+
+## Installing BWA-MEM
+RUN cd /tools/ \
+    && wget https://github.com/lh3/bwa/releases/download/v${bwa_version}/bwa-${bwa_version}.tar.bz2 \
+    && tar -xvjf bwa-${bwa_version}.tar.bz2 \
+    && cd bwa-${bwa_version}\
+    && make
+
+## Installing BWA-MEM2
+RUN cd /tools/ \
+    && wget https://github.com/bwa-mem2/bwa-mem2/releases/download/v${bwa_mem2_version}/bwa-mem2-${bwa_mem2_version}_x64-linux.tar.bz2 \
+    && tar jxf bwa-mem2-${bwa_mem2_version}_x64-linux.tar.bz2
+
+## Installling mosdepth
+RUN mkdir -p /tools/mosdepth \
+    && cd /tools/mosdepth/ \
+    && wget https://github.com/brentp/mosdepth/releases/download/v0.3.3/mosdepth \
+    && chmod +x mosdepth \
+    && mkdir /tools/mosdepth/scripts \
+    && cd /tools/mosdepth/scripts \
+    && wget https://raw.githubusercontent.com/brentp/mosdepth/master/scripts/plot-dist.py \
+    && chmod +x plot-dist.py
+
+## Installing GATK
+RUN cd /tools/ \
+    && wget https://github.com/broadinstitute/gatk/releases/download/${gatk_version}/gatk-${gatk_version}.zip \
+    && unzip gatk-${gatk_version}
+
+## Installing Strelka2
+RUN cd /tools/ \
+    && wget https://github.com/Illumina/strelka/releases/download/v${strelka2_version}/strelka-${strelka2_version}.centos6_x86_64.tar.bz2 \
+    && tar xvjf strelka-${strelka2_version}.centos6_x86_64.tar.bz2
+ENV STRELKA_INSTALL_PATH="/tools/strelka-${strelka2_version}.centos6_x86_64"
+
+## Installing Manta
+RUN cd /tools/ \
+    && wget --no-check-certificate https://github.com/Illumina/manta/releases/download/v${manta_version}/manta-${manta_version}.centos6_x86_64.tar.bz2 \
+    && tar xvjf manta-${manta_version}.centos6_x86_64.tar.bz2
+
+## Installing Platypus
+# First install python2.7-pip and Cython
+# RUN curl https://bootstrap.pypa.io/pip/2.7/get-pip.py --output get-pip.py \
+#   && python get-pip.py \
+#   && pip2.7 install Cython
+#   wget -P ~/.local/lib https://bootstrap.pypa.io/pip/2.7/get-pip.py \
+#   && python2.7 ~/.local/lib/get-pip.py --user \
+#   && printf "\nPATH=\$PATH:~/.local/bin/" >> ~/.bashrc \
+#   && source ~/.bashrc \
+#   && pip install cython
+
+# Now to Installing Platypus
+# Not the main branch but a branch from a user gtamazian with some corrections
+# RUN cd /tools/ \
+#   && git clone --recursive https://github.com/gtamazian/Platypus \
+#   && cd Platypus/ \
+#   && make \
+#   && export C_INCLUDE_PATH=/usr/local/include \
+#   && export LIBRARY_PATH=/usr/local/lib \
+#   && export LD_LIBRARY_PATH=/usr/local/lib
+
+## Installing Varscan
+RUN mkdir -p /tools/varscan-${varscan_version}/ \
+    && cd /tools/varscan-${varscan_version}/ \
+    && wget https://github.com/dkoboldt/varscan/releases/download/${varscan_version}/VarScan.v${varscan_version}.jar \
+    && mv VarScan.v${varscan_version}.jar VarScan.jar
+
+## Installing Freebayes
+RUN mkdir -p /tools/freebayes-${freebayes_version}/ \
+    && cd /tools/freebayes-${freebayes_version}/ \
+    && wget https://github.com/freebayes/freebayes/releases/download/v${freebayes_version}/freebayes-${freebayes_version}-linux-amd64-static.gz \
+    && gzip -d freebayes-${freebayes_version}-linux-amd64-static.gz \
+    && chmod +x ./freebayes-${freebayes_version}-linux-amd64-static \
+    && mv freebayes-${freebayes_version}-linux-amd64-static freebayes \
+    && mkdir scripts/ \
+    && cd scripts/ \
+    && wget https://raw.githubusercontent.com/freebayes/freebayes/master/scripts/GenerateFreebayesRegions.R \
+    && wget https://raw.githubusercontent.com/freebayes/freebayes/master/scripts/bgziptabix \
+    && wget https://raw.githubusercontent.com/freebayes/freebayes/master/scripts/coverage_to_regions.py \
+    && wget https://raw.githubusercontent.com/freebayes/freebayes/master/scripts/fasta_generate_regions.py \
+    && wget https://raw.githubusercontent.com/freebayes/freebayes/master/scripts/freebayes-parallel \
+    && wget https://raw.githubusercontent.com/freebayes/freebayes/master/scripts/generate_freebayes_region_scripts.sh \
+    && wget https://raw.githubusercontent.com/freebayes/freebayes/master/scripts/sam_add_rg.pl \
+    && wget https://raw.githubusercontent.com/freebayes/freebayes/master/scripts/samples.cnv \
+    && wget https://raw.githubusercontent.com/freebayes/freebayes/master/scripts/split_ref_by_bai_datasize.py \
+    && wget https://raw.githubusercontent.com/freebayes/freebayes/master/scripts/update_version.sh \
+    && wget https://raw.githubusercontent.com/freebayes/freebayes/master/scripts/vcffirstheader \
+    && chmod +x *
+
+## Installing STAR
+RUN cd /tools/ \
+    && wget https://github.com/alexdobin/STAR/archive/${STAR_version}.tar.gz \
+    && tar -xzf ${STAR_version}.tar.gz \
+    && cd STAR-${STAR_version}/source/ \
+    && make STAR \
+    && cp STAR /usr/local/bin
+
+## Installing featurecounts
+RUN cd /tools/ \
+    && wget https://sourceforge.net/projects/subread/files/subread-${subread_version}/subread-${subread_version}-Linux-x86_64.tar.gz \
+    && tar -xvf subread-${subread_version}-Linux-x86_64.tar.gz \
+    && cd subread-${subread_version}-Linux-x86_64 \
+    && cp bin/featureCounts /usr/local/bin
+
+## Installing MultiQC
+RUN cd /tools/ \
+    && wget https://github.com/ewels/MultiQC/archive/master.zip \
+    && unzip master.zip \
+    && cd MultiQC-master \
+    && pip3 install .
+
+## Removing downloaded packages
+RUN cd /tools/ \
+    && rm fastqc_v${fastqc_version}.zip \
+    && rm bwa-${bwa_version}.tar.bz2 \
+    && rm bwa-mem2-${bwa_mem2_version}_x64-linux.tar.bz2 \
+    && rm strelka-${strelka2_version}.centos6_x86_64.tar.bz2 \
+    && rm manta-${manta_version}.centos6_x86_64.tar.bz2 \
+    && rm samtools-${samtools_version}.tar.bz2 \
+    && rm bcftools-${bcftools_version}.tar.bz2 \
+    && rm htslib-${htslib_version}.tar.bz2 \
+    && rm bedtools-${bedtools_version}.tar.gz \
+    && rm master.zip \
+    && rm gatk-${gatk_version}.zip \
+    && rm ${STAR_version}.tar.gz \
+    && rm subread-${subread_version}-Linux-x86_64.tar.gz
