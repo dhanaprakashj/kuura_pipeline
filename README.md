@@ -1,18 +1,23 @@
 # Kuura - An automated workflow for analyzing WES and WGS data ##
 
-Kuura is an open-source application for automated sequencing data analysis. The pipeline is written in nextflow, and the running environment is provided in a docker container to make them scalable and reproducible. This README provides information on how to setup and run Kuura pipeline for DNA-seq data analysis.
+Kuura is an open-source application for automated sequencing data analysis. The pipeline is written in *nextflow*, and the running environment is provided in a docker container to make them scalable and reproducible. This README provides information on how to setup and run Kuura pipeline for DNA-seq data analysis.
 
 **ABSTRACT:**
 
 The advent of high-throughput sequencing technologies has revolutionized the field of genomic sciences by cutting down the cost and time associated with standard sequencing methods. This advancement has not only provided the research community with an abundance of data but has also presented the challenge of analyzing it. The paramount challenge in analyzing the copious amount of data is in using the optimal resources in terms of available tools. To address this research gap, we propose “Kuura - An automated workflow for analyzing WES and WGS data”, which is optimized for both whole exome and whole genome sequencing data.
 
-This workflow is based on the nextflow pipeline scripting language and uses docker to manage and deploy the workflow. The workflow consists of four analysis stages - quality control, mapping to reference genome & quality score recalibration, variant calling & variant recalibration and variant consensus & annotation. An important feature of the DNA-seq workflow is that it uses the combination of multiple variant callers (GATK Haplotypecaller, DeepVariant, VarScan2, Freebayes and Strelka2), generating a list of high-confidence variants in a consensus call file.
+This workflow is based on the *nextflow* pipeline scripting language and uses docker to manage and deploy the workflow. The workflow consists of four analysis stages - quality control, mapping to reference genome & quality score recalibration, variant calling & variant recalibration and variant consensus & annotation. An important feature of the DNA-seq workflow is that it uses the combination of multiple variant callers (*GATK Haplotypecaller*, *DeepVariant*, *VarScan2*, *Freebayes* and *Strelka2*), generating a list of high-confidence variants in a consensus call file.
 
 The workflow is flexible as it integrates the fragmented tools and can be easily extended by adding or updating tools or amending the parameters list. The use of a single parameters file enhances reproducibility of the results. The ease of deployment and usage of the workflow further increases computational reproducibility providing researchers with a standardized tool for the variant calling step in different projects. The source code, instructions for installation and use of the tool are publicly available at our github repository https://github.com/dhanaprakashj/kuura_pipeline.
 
+## Pipeline structure:
+
+The Kuura pipeline was constructed exclusively for the purpose of analyzing whole genome sequencing data and whole exome sequencing data. The pipeline has been categorized into four stages based on their functionalities; an illustration showing the stages is provided in figure below;
+
+![Summary of the steps executed by the Kuura pipeline](https://github.com/dhanaprakashj/kuura_pipeline/blob/main/documentation/figures/Fig1.png)
+
 
 ## Setting up and running the kuura pipeline
-
 
 **Step 1:** Install and configure *nextflow* & *docker*.
 
@@ -67,7 +72,7 @@ cd kuura_pipeline/configuration/
 <text editor of choice> default.config
 ```
 
-**Step 5:** Running the pipeline:
+**Step 6:** Running the pipeline:
 
 After defining all the parameters, run the pipeline by executing;
 
