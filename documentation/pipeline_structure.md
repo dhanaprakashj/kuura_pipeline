@@ -152,8 +152,10 @@ The *docker* folder contains the dockerfile that is used to build a custom *dock
 
 >- documentation/
 >   - pipeline_structure.md
+>   - figures/
+>       - Fig1.png
 
-This folder contains documentation explaining the kuura pipeline.
+This folder contains documentation and figures explaining the kuura pipeline.
 
 ### Configuring the *nextflow* parameters
 
