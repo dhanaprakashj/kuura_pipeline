@@ -1,20 +1,22 @@
 ## Get to know the pipeline structure:
 
-The files in the Kuura pipeline github repository are listed below:
+The folders in the Kuura pipeline github repository are listed below:
 
 >- dnaseq
 >- docker
 >- documentation
+>- LICENSE
+>- README.md
 
 ### The files in the dnaseq folder are listed below:
-
->- bin/
->    - main.nf
->- nextflow.config
->- configuration/
->    - execution-parameters.config
->    - default.config
->    - testing.config
+>- dnaseq/
+>   - bin/
+>        - main.nf
+>   - nextflow.config
+>   - configuration/
+>        - execution-parameters.config
+>       - default.config
+>       - testing.config
 
 
 **1.1: bin/main.nf:**
@@ -148,8 +150,8 @@ The *docker* folder contains the dockerfile that is used to build a custom *dock
 
 ### The files in the documentation folder are listed below:
 
->- README.md
->- pipeline_structure.md
+>- documentation/
+>   - pipeline_structure.md
 
 This folder contains documentation explaining the kuura pipeline.
 
