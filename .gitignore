@@ -1,0 +1,7 @@
+.nextflow/
+.nextflow.log*
+slurm-*.out
+timeline.html*
+trace.txt*
+report*
+dag*
