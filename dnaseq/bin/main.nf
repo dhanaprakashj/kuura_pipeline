@@ -92,8 +92,6 @@ process ValidateRunCompletion {
 process QualityAssessment {
 
         label "utuprcagenetics"
-	
-	scratch '/mount/persistant_volume_11tb/pipeline_test/nxf_tmp/'
 
         maxForks params.lightResourceForkThreshold
 
@@ -124,8 +122,6 @@ process QualityAssessment {
 process ReadPreProcessing {
 
         label "utuprcagenetics"
-        
-	scratch '/mount/persistant_volume_11tb/pipeline_test/nxf_tmp/'
 
         maxForks params.lightResourceForkThreshold
 
@@ -165,8 +161,6 @@ process ReadPreProcessing {
 process QualityAssessmentProc {
 
         label "utuprcagenetics"
-	
-	scratch '/mount/persistant_volume_11tb/pipeline_test/nxf_tmp/'
 
         maxForks params.lightResourceForkThreshold
 
@@ -203,8 +197,6 @@ process AlignToGenome {
 
         label "utuprcagenetics"
 
-	scratch '/mount/persistant_volume_11tb/pipeline_test/nxf_tmp/'
-
         maxForks params.heavyResourceForkThreshold
         
         tag "BWI-MEM Alignment on $sampleID"
@@ -233,8 +225,6 @@ process AlignToGenome {
 process MarkDuplicates {
 
         label "gatk"
-
-	scratch '/mount/persistant_volume_11tb/pipeline_test/nxf_tmp/'
 
 	maxForks params.heavyResourceForkThreshold
 
@@ -266,8 +256,6 @@ process SortAndIndexAlignments {
 
         label "utuprcagenetics"
 
-	scratch '/mount/persistant_volume_11tb/pipeline_test/nxf_tmp/'
-
         maxForks params.lightResourceForkThreshold
         
         tag "Sorting and Indexing BAMs for $sampleID"
@@ -298,8 +286,6 @@ process SortAndIndexAlignments {
 process RecalibrateQualityScores {
 
         label "gatk"
-	
-	scratch '/mount/persistant_volume_11tb/pipeline_test/nxf_tmp/'
 
         maxForks params.heavyResourceForkThreshold
         
@@ -333,8 +319,6 @@ process RecalibrateQualityScores {
 process AnalyseCoverageMosdepth {
 
         label "mosdepth"
-	
-	scratch '/mount/persistant_volume_11tb/pipeline_test/nxf_tmp/'
 
         maxForks params.heavyResourceForkThreshold
         
@@ -370,8 +354,6 @@ process AnalyseCoverageMosdepthWES {
 
         label "utuprcagenetics"
 
-	scratch '/mount/persistant_volume_11tb/pipeline_test/nxf_tmp/'
-
 	maxForks params.heavyResourceForkThreshold
         
         tag "Analysing Coverage with mosdepth for $sampleID - additional WES specific analysis"
@@ -402,8 +384,6 @@ process plotCoverageMosdepth {
 
         label "utuprcagenetics"
 
-	scratch '/mount/persistant_volume_11tb/pipeline_test/nxf_tmp/'
-
 	maxForks params.heavyResourceForkThreshold
 
         tag "Plotting Coverage with mosdepth for $sampleID"
@@ -428,8 +408,6 @@ process plotCoverageMosdepth {
 process CallVariantsGATK {
 
         label "gatk"
-
-	scratch '/mount/persistant_volume_11tb/pipeline_test/nxf_tmp/'
 
 	maxForks params.heavyResourceForkThreshold
 
@@ -459,8 +437,6 @@ process CallVariantsGATK {
 process VariantRecalibration {
 
         label "gatk"
-
-	scratch '/mount/persistant_volume_11tb/pipeline_test/nxf_tmp/'
 
 	maxForks params.heavyResourceForkThreshold 
 
@@ -495,8 +471,6 @@ process ApplyRecalibration {
 
         label "gatk"
 
-	scratch '/mount/persistant_volume_11tb/pipeline_test/nxf_tmp/'
-
 	maxForks params.heavyResourceForkThreshold
 
 	tag "Applying desired level of recalibration using GATK ApplyVQSR for $sampleID"
@@ -524,8 +498,6 @@ process ApplyRecalibration {
 process IndelRecalibration {
 
         label "gatk"
-
-	scratch '/mount/persistant_volume_11tb/pipeline_test/nxf_tmp/'
 
 	maxForks params.heavyResourceForkThreshold
 
@@ -561,8 +533,6 @@ process ApplyIndelRecalibration {
 
         label "gatk"
 
-	scratch '/mount/persistant_volume_11tb/pipeline_test/nxf_tmp/'
-
 	maxForks params.heavyResourceForkThreshold
 
 	tag "Applying desired level of recalibration for Indels using GATK ApplyVQSR for $sampleID"
@@ -593,8 +563,6 @@ process ApplyIndelRecalibration {
 process CallVariantsDV {
 
         label "deepvariant"
-
-	scratch '/mount/persistant_volume_11tb/pipeline_test/nxf_tmp/'
 
 	maxForks params.heavyResourceForkThreshold
 
@@ -627,8 +595,6 @@ process CallVariantsDV {
 process CallVariantsStrelka {
 
         label "utuprcagenetics"
-
-	scratch '/mount/persistant_volume_11tb/pipeline_test/nxf_tmp/'
 
         maxForks params.heavyResourceForkThreshold
 
@@ -666,8 +632,6 @@ process CallVariantsFreebayes {
 
         label "utuprcagenetics"
 
-	scratch '/mount/persistant_volume_11tb/pipeline_test/nxf_tmp/'
-
 	maxForks params.lightResourceForkThreshold
         
         tag "Variant calling using Freebayes for $sampleID"
@@ -698,8 +662,6 @@ process CallVariantsFreebayes {
 process CallVariantsVarScan {
 
         label "utuprcagenetics"
-
-	scratch '/mount/persistant_volume_11tb/pipeline_test/nxf_tmp/'
 
 	maxForks params.lightResourceForkThreshold
         
@@ -732,8 +694,6 @@ process CallVariantsVarScan {
 // Uses bcftools isec to calculate consensus and generate input for VEP
 process FormatForConsensus {
         label "utuprcagenetics"
-
-	scratch '/mount/persistant_volume_11tb/pipeline_test/nxf_tmp/'
 
 	maxForks params.lightResourceForkThreshold
         
@@ -777,8 +737,6 @@ process FormatForConsensus {
 process variantEffectPredictionConsensus {
 
         label "vep"
-
-	scratch '/mount/persistant_volume_11tb/pipeline_test/nxf_tmp/'
 
 	maxForks params.heavyResourceForkThreshold 
 
@@ -828,8 +786,6 @@ doneValidateRunCompletion.concat(
 // Uses MultiQC to generate summaries of the run.
 process multiqc {
         label "utuprcagenetics"
-
-	scratch '/mount/persistant_volume_11tb/pipeline_test/nxf_tmp/'
 
 	maxForks params.lightResourceForkThreshold
         
